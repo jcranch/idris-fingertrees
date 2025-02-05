@@ -1,0 +1,10 @@
+[custom.all.fingertrees]
+type = "local"
+path = "."
+ipkg = "fingertrees.ipkg"
+test = "test/test.ipkg"
+
+[custom.all.fingertrees-test]
+type = "local"
+path = "test"
+ipkg = "test.ipkg"

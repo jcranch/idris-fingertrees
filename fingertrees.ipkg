@@ -1,0 +1,22 @@
+package fingertrees
+version = 0.1.0
+authors = "James Cranch"
+sourceloc = "https://github.com/jcranch/idris-fingertrees"
+license = "BSD3"
+brief = "Finger trees in Idris, loosely based on the Paterson/Hinze library for Haskell"
+
+-- the Idris2 version required (e.g. langversion >= 0.5.1)
+-- langversion
+
+-- packages to add to search path
+depends = contrib,
+          extrafun
+
+-- modules to install
+modules = Data.Fingertree,
+          Data.Fingertree.DepMap,
+	  Data.Fingertree.Seq,
+	  Data.Fingertree.IntIntervals,
+	  Data.Fingertree.RealIntervals
+
+sourcedir = "src"

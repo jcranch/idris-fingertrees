@@ -1,0 +1,6 @@
+package mesnrklesbkbdsjfbdkfjbdskjfds
+depends = control-spec, contrib
+main = Main
+sourcedir = "src"
+executable = runAllTests
+modules = SeqSpec,DepMapSpec
