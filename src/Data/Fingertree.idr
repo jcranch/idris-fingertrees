@@ -1,9 +1,8 @@
 module Data.Fingertree
 
--- TODO some of the code: (<++), (++>), assemblel, assembler is
--- needlessly inefficient: better to build the list into a fingertree
--- and binary merge.
-
+-- TODO Write a more general-purpose tree splitters
+-- Can want something which may return a split (like lookup), or something that will definitely return a split
+-- Might want to pass the valuations through monoid homomorphisms (in case they're expensive, and not being scrutinised)
 
 
 ||| A Cache is something which stores data of type a, which has a
@@ -358,6 +357,14 @@ parameters (w : m -> m -> Ordering)
   splitBy = splitByTree neutral
 
 
+{-
+data SearchResult : Type -> Type -> Type where
+  OnLeft : SearchResult m a
+  OnRight : SearchResult m a
+  Position : FingerTree m a -> a -> FingerTree m a -> SearchResult m a
+  Misbehaviour : SearchResult m a
+-}
+
 -- There follows some strategies for rebuilding nodes. This strategy
 -- obtains the new cache from the old.
 export
@@ -486,72 +493,6 @@ treeLAccumMap p g z (Deep l u r _) = let
       y1 = y <+> mval a
       y2 = y1 <+> mval b
       in reNode3 p (g y a) (g y1 b) (g y2 c) i
-
-
-||| Pieces of fingertrees
-public export
-data FTPiece : Type -> Type -> Type where
-  TreePiece : FingerTree m a -> FTPiece m a
-  LiftedPiece : List (FTPiece m (Node m a)) -> m -> FTPiece m a
-
-singlePiece : a -> FTPiece m a
-singlePiece = TreePiece . Single
-
-export
-Cache m a => Cache m (FTPiece m a) where
-  mval (TreePiece t) = mval t
-  mval (LiftedPiece _ c) = c
-
-export
-takeApart : Cache m a => FingerTree m a -> List (FTPiece m a)
-takeApart Empty = []
-takeApart (Single x) = [singlePiece x]
-takeApart (Deep l m r _) = map singlePiece (digitToList l) ++ LiftedPiece [TreePiece m] (mval m) :: map singlePiece (digitToList r)
-
-||| Convert a fingertree of nodes to a fingertree
-deNode : Cache m a => FingerTree m (Node m a) -> FingerTree m a
-deNode t = case lview t of
-  Nothing => Empty
-  Just (x,t') => case rview t' of
-    Nothing => nodeToTree x
-    Just (t'',y) => Deep (nodeToDigit x) t'' (nodeToDigit y) (mval t)
-
-export
-putBackTogether : Cache m a => List (FTPiece m a) -> FingerTree m a
-putBackTogether [] = Empty
-putBackTogether (TreePiece t::l) = t <+> putBackTogether l
-putBackTogether (LiftedPiece a _::l) = deNode (putBackTogether a) <+> putBackTogether l
-
-||| What's the largest prefix satisfying predicate p?
-export
-splitPieces : Cache m a => (m -> Bool) -> List (FTPiece m a) -> (List (FTPiece m a), List (FTPiece m a))
-splitPieces f = let
-
-  inner : m -> List (FTPiece m a) -> (List (FTPiece m a), List (FTPiece m a))
-  inner _ [] = ([], [])
-  inner x (a::l) = let
-    y = x <+> mval a
-    in if f y
-       then map (a::) (inner y l)
-       else case a of
-         TreePiece Empty => inner x l
-         TreePiece (Single v) => (a::l, [])
-         TreePiece d@(Deep _ _ _ _) => inner x (takeApart d <+> l)
-         LiftedPiece l' m => case splitPieces f l' of
-           (u, []) => (l, [LiftedPiece l' m])
-           (u, n::v) => ?what
-
-{-
-  inner x (Empty::l) = inner x l
-  inner x l@(Single a::l') = let
-    y = x <+> mval a
-    in if f y then map (Single a::) (inner y l') else (l, [])
-  inner x (d::l) = let
-    y = x <+> mval d
-    in if f y then map (d::) (inner y l) else inner x (takeApart d ++ l)
--}
-
-  in swap . inner neutral
 
 
 export

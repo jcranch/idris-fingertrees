@@ -15,6 +15,7 @@ depends = contrib,
 -- modules to install
 modules = Data.Fingertree,
           Data.Fingertree.DepMap,
+	  Data.Fingertree.Depq,
 	  Data.Fingertree.Seq,
 	  Data.Fingertree.IntIntervals,
 	  Data.Fingertree.RealIntervals

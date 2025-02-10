@@ -2,5 +2,5 @@ runtests:
 	spec-discover test/
 	pack test fingertrees
 
-build:
+compile:
 	pack build
