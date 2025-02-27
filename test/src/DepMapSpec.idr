@@ -1,6 +1,8 @@
 import Control.App
 import Control.App.Spec
 import Data.Fingertree.DepMap
+import Data.Vect
+
 
 v2 : Vect 2 String
 v2 = ["Pinky", "Perky"]
@@ -30,7 +32,7 @@ m1 = makeDepMap a where
 m2 : DepMap Nat (flip Vect String)
 m2 = makeDepMap a where
   a : List (DPair Nat (flip Vect String))
- a = [l2, l3', l5]
+  a = [l2, l3', l5]
 
 
 -- Even though the whole chain of implementations is in scope, Idris

@@ -1,5 +1,5 @@
 package mesnrklesbkbdsjfbdkfjbdskjfds
-depends = control-spec, contrib
+depends = control-spec, contrib, fingertrees
 main = Main
 sourcedir = "src"
 executable = runAllTests
